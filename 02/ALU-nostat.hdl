@@ -40,32 +40,25 @@ CHIP ALU-nostat {
         out[16];
 
     PARTS:
-    Mux16(a=x, b=false, sel=zx, out=zerox);
-    Not(in=zx,out=nzx);
-    Mux16(a=x, b=y, sel=zx, out=x);
-    
-    Mux16(a=false, b=y, sel=zy, out=zeroy);
-    Not(in=zy,out=nzy);
-    Mux16(a=false, b=y, sel=zy, out=y);
 
-    Not(in=x, out=notx);
-    Mux(a=x, b=false, sel=nx, out=notx);
-    Not(in=nx, out=notnx);
-    Mux(a=x, b=false, sel=notnx, out=x);
+    // zx zy
+    Mux16(a=x, b=false, sel=zx, out=x1);
+    Mux16(a=y, b=false, sel=zy, out=y1);
 
-    Not(in=y, out=noty);
-    Mux(a=y, b=false, sel=ny, out=noty);
-    Not(in=ny, out=notny);
-    Mux(a=y, b=false, sel=notny, out=y);
+    // nx ny
+    Not16(in=x1, out=nx1);
+    Not16(in=y1, out=ny1);
 
-    Mux(a=and, b=or, sel=f, out=runand);
-    Not(in=f, out=nf);
-    Mux(a=and, b=or, sel=nf, out=runor);
-    
-    Mux(a=false, b=true, sel=no, out=neg);
-    Not(in=no, out=notno);
-    M8x(a=false, b=true, sel=notno, out=ori)
+    Mux16(a=x1, b=nx1, sel=nx, out=x2);
+    Mux16(a=y1, b=ny1, sel=ny, out=y2);
 
-    Mux(a=x, b=y, sel=)
-    
+    // f
+    Add16(a=x2, b=y2, out=xaddy);
+    And16(a=x2, b=y2, out=xandy);
+    Mux16(a=xandy, b=xaddy, sel=f, out=out1);
+
+    // no
+    Not16(in=out1, out=notout1);
+    Mux16(a=out1, b=notout1, sel=no, out=out);
+
 }
