@@ -40,4 +40,37 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    Or16(a=false, b=instruction, out[15]=isC, out[12]=a, out[11]=c1, out[10]=c2, out[9]=c3, out[8]=c4, out[7]=c5, out[6]=c6, out[5]=d1, out[4]=d2, out[3]=d3, out[2]=j1, out[1]=j2, out[0]=j3 );
+    // A register
+    Not(in=isC, out=isA);             // instruction一定是A、C其中一種，所以可以設定變數isA為isC的相反
+    And(a=isC, b=d1, out=ALUtoA);     // 如果instruction是C指令那就設定ALUtoA是d1 代表ALU會輸出d1給A暫存器
+    Or(a=isA, b=ALUtoA, out=Aload);   // 如果instruction是A指令或是ALU有輸出東西給A暫存器 就把輸出存為Aload 當A暫存器的Load
+    
+    Mux16(a=instruction, b=ALUout, sel=isC, out=Ain);   //如果instruction是C指令 輸出instruction給A當輸入 否則 輸出ALUout給A當輸入
+
+    ARegister(in=Ain, load=Aload, out=Aout, out[0..14]=addressM);   // 把上一行Mux16的輸出Ain 及 把上兩行的輸出Aoad 輸入給A暫存器 並 輸出out=Aout 及 addressM紀錄A指令指定的記憶體位置
+    
+    // D register
+    And(a=isC, b=d2, out=Dload);    // 如果instruction是C指令那就設定Dload是d2 當D暫存器的Load
+    DRegister(in=ALUout, load=Dload, out=Dout);  
+    
+    // ALU
+    Mux16(a=Aout, b=inM, sel=a, out=AorM);  // a是out[12]
+    ALU(x=Dout, y=AorM, zx=c1, nx=c2, zy=c3, ny=c4, f=c5, no=c6, out=ALUout, out=outM, zr=zr, ng=ng);
+
+    // JUMP condition
+    Or(a=ng, b=zr, out=ngzr);             // ngzr = ng or zr  // ng = (out < 0),  zr = (out = 0)
+    Not(in=ngzr, out=gt);                 // gt = out > 0 = not(ng or zr)
+    And(a=ng, b=j1, out=passLT);          // passLT = ng and LT
+    And(a=zr, b=j2, out=passEQ);          // passEQ = zr and EQ
+    And(a=gt, b=j3, out=passGT);          // passGT = gt and GT
+    Or(a=passLT, b=passEQ, out=passLE);   // JLE (1 1 0) = JLT (1 0 0) or JEQ (0 1 0)
+    Or(a=passLE, b=passGT, out=pass);     // null (0 0 0) = JLE (1 1 0) or JGT (0 0 1) // null -> no jump
+    And(a=isC, b=pass, out=PCload);       // PCload = isC & pass
+    PC(in=Aout, load=PCload, inc=true, reset=reset, out[0..14]=pc); // PCload = isC & ((ng&j1) | (zr&j2) | (!ng&!zr&j3))
+
+    // output
+    And(a=isC, b=d3, out=writeM);       // 如果instruction是C指令那就設定writeM是d3 代表要寫入M的內容
+
+
 }
