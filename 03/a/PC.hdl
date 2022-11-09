@@ -17,11 +17,12 @@ CHIP PC {
 
     PARTS:
     // Put your code here:
-    Register(in = st, load = true, out = toloop, out = out);
 
-    Inc16(in = toloop, out = nr);
+    Inc16(in = o, out = oInc);
 
-    Mux16(a = toloop, b = nr, sel = inc, out = m1);
-    Mux16(a = m1, b = in, sel = load, out = m2);
-    Mux16(a = m2, b = false, sel = reset, out = st);
+    Mux16(a = o, b = oInc, sel = inc, out = t0);
+    Mux16(a = t0, b = in, sel = load, out = t1);
+    Mux16(a = t1, b = false, sel = reset, out = count);
+
+    Register(in = count, load = true, out = o, out = out);
 }

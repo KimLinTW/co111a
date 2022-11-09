@@ -37,6 +37,7 @@ void pass1(string inFile){
     
     string line;
     ifstream input_file(inFile);
+// https://cloud.tencent.com/developer/article/1398721
 
     while (getline(input_file, line))
     {
