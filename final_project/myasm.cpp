@@ -88,6 +88,8 @@ void parse1(string line, string& save, int* counter){
 }
 
 
+
+
 void parse2(string line, string& save, int* counter, streambuf *hack_buf, streambuf *bin_buf, streambuf *origin){
 // void parse2(string line, string& save, int* counter){
     regex reg("//.+");
@@ -123,13 +125,19 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
                         cout << setw(16) << setfill('0') << bitset<8>(symMap[m[1]]) << endl;
                         cout.rdbuf(origin);
                         cout << setw(16) << setfill('0') << bitset<8>(symMap[m[1]]);
-                        cout << std::nouppercase << ' ' << setw(4) << hex << symMap[m[1]];
+                        cout << nouppercase << ' ' << setw(4) << hex << symMap[m[1]] << " ";
+                        cout.rdbuf(bin_buf); //
+                        cout << nouppercase << dec << symMap[m[1]] << endl;
+                        cout.rdbuf(origin);
                     }else{
                         cout.rdbuf(hack_buf);
                         cout << setw(16) << setfill('0') << bitset<8>(stoi(m[1])) << endl;
                         cout.rdbuf(origin);
                         cout << setw(16) << setfill('0') << bitset<8>(stoi(m[1]));
-                        cout << std::nouppercase << ' ' << setw(4) << hex << stoi(m[1]);
+                        cout << nouppercase << ' ' << setw(4) << hex << stoi(m[1]) << " ";
+                        cout.rdbuf(bin_buf); //
+                        cout << nouppercase << m[1] << endl;
+                        cout.rdbuf(origin);
                     }
                 }
             }else{
@@ -154,7 +162,11 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
                     string binary_str("111"+ccode+dcode+"000");
                     bitset<16> set(binary_str);  
 
-                    cout << nouppercase << hex << " " << set.to_ulong();
+                    cout << nouppercase << hex << " " << set.to_ulong() << " ";
+
+                    cout.rdbuf(bin_buf); //
+                    cout << nouppercase << dec << stoi(binary_str,0,2) << endl;
+                    cout.rdbuf(origin);
                 }else{
                     string::size_type loc = line.find(";",0);
                     
@@ -164,14 +176,19 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
                     jcode = jMap[js];
 
                     // 111 7(dcode) 000 3(jcode)
-                    // cout.rdbuf(hack_buf);
-                    // cout << std::dec << 111 << setw(7) << setfill('0') << ccode << setw(3) << setfill('0') << 0 << jcode << endl;
-                    // cout.rdbuf(origin);
+                    cout.rdbuf(hack_buf);
+                    cout << std::dec << 111 << setw(7) << setfill('0') << ccode << setw(3) << setfill('0') << 0 << jcode << endl;
+                    cout.rdbuf(origin);
                     cout << std::dec << 111 << setw(7) << setfill('0') << ccode << setw(3) << setfill('0') << 0 << jcode;
 
                     string binary_str("111"+ccode+"000"+jcode);
                     bitset<16> set(binary_str);  
-                    cout << nouppercase << hex << " " << set.to_ulong();
+                    cout << nouppercase << hex << " " << set.to_ulong() << " ";
+                    cout.rdbuf(bin_buf); //
+                    // to_bin.write((char *) &buf, sizeof(buf));
+                    // to_bin.write(binary_str,binary_str.size())
+                    cout << ios::binary << nouppercase << dec << stoi(binary_str,0,2) << endl;
+                    cout.rdbuf(origin);
                 }
             }
             cout << endl;
@@ -204,7 +221,9 @@ void pass2(string inFile, string line, string save, int* counter, streambuf *hac
     }
 }
 
-void assemble(string file, int* count2er) {
+ofstream to_bin("sum.bin",std::ofstream::binary);
+
+void assemble(string file) {
     string line;
     string save("");
 
@@ -224,10 +243,13 @@ void assemble(string file, int* count2er) {
     // ofstream to_bin;
     streambuf *hack_buf, *bin_buf, *origin;
     to_hack.open(hackFile, ios::out | ios::trunc); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
-    // to_bin.open(binFile, ios::out | ios::trunc); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
+    // to_bin.open(binFile, ios::out | ios::trunc | ios::binary); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
+    // to_bin.open(binFile, std::fstream::trunc|std::fstream::binary); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
     origin = cout.rdbuf();
     hack_buf = to_hack.rdbuf();
-    // bin_buf = to_bin.rdbuf();
+    bin_buf = to_bin.rdbuf();
+
+    to_bin.write("1234", strlen("1234"));
     
  
     int counter = 0;
@@ -238,7 +260,7 @@ void assemble(string file, int* count2er) {
 
     in.close();
     to_hack.close();
-    // to_bin.close();
+    to_bin.close();
     
 
     
@@ -274,9 +296,8 @@ void assemble(string file, int* count2er) {
 }
 
 int main(void) {
-    int counter = 0;
     string file("sum");
-    assemble(file, &counter);
+    assemble(file);
     return 0;
 }
 
