@@ -1,6 +1,6 @@
 // RAM[0] = 10
 @10
-D            =A
+D=A
 @0
 M=D
 // Computes RAM[1] = 1 + ... + RAM[0]

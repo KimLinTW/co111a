@@ -161,20 +161,14 @@ void assemble(char *file) {
   sprintf(inFile, "%s.asm", file);
   sprintf(hackFile, "%s.hack", file);
   sprintf(binFile, "%s.bin", file);
-  cout << "inFile:"   << inFile   << " its type is : " << typeid(inFile).name()   << endl;
-  cout << "hackFile:" << hackFile << " its type is : " << typeid(hackFile).name() << endl;
-  cout << "binFile:"  << binFile  << " its type is : " << typeid(binFile).name()  << endl;
   
-  // symDump(&symMap);
+  symDump(&symMap);
   pass1(inFile);
-  // symDump(&symMap);
-  // pass2(inFile, hackFile, binFile);
+  symDump(&symMap);
+  pass2(inFile, hackFile, binFile);
 }
 // run: ./asm <file>
 // notice : <file> with no extension.
 int main(int argc, char *argv[]) {
-  int a=0;
-  cout << "a = " << a << "\t its type is: " << typeid(a).name() << endl;
-  cout << argv[1] << " its type is : " << typeid(argv[1]).name() << endl;
   assemble(argv[1]);
 }
