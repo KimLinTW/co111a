@@ -7,11 +7,11 @@
 #include <iomanip>
 #include <bitset>
 
-
 using namespace std;
 
-// vvvvvvvvvvvvvvvvvvv擷取自老師的 co/06/asm.cpp vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+ofstream to_bin; // 宣告在237行 無法運作且不會報錯
 
+// vvvvvvvvvvvvvvvvvvv擷取自老師的 co/06/asm.cpp vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
 map<string, string> dMap {
   {"", "000"}, {"M", "001"}, {"D", "010"}, {"MD", "011"},
   {"A","100"}, {"AM","101"}, {"AD","110"}, {"AMD","111"}
@@ -77,27 +77,21 @@ void parse1(string line, string& save, int* counter){
     // }
     // symble = regex_match(line);
     if (line != ""){
-
         cout << setfill('0') << setw(2) << *counter << ":" << line << endl;
-
         if (line == "(" + sym + ")")
             cout << "symbol:" << sym << " address=" << (*counter)-- << endl;
-
         (*counter)++;
     }
 }
 
-
-
-
 void parse2(string line, string& save, int* counter, streambuf *hack_buf, streambuf *bin_buf, streambuf *origin){
-// void parse2(string line, string& save, int* counter){
     regex reg("//.+");
     regex reg2(" ");
     regex reg3("\\((\\w+)\\)");
     regex reg4("\\@(\\w+)");
     smatch m;
     string sym;
+    int save2bin;
     
     line = regex_replace(line, reg, "");
     line = regex_replace(line, reg2, ""); 
@@ -119,31 +113,29 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
                     bool isSym = !isNumber(m[1]);
                     if(isSym){
                         if (symMap.find(m[1]) == symMap.end()) symMap[m[1]] = varTop++;
-                        // cout -> file
-                        // https://huangwang.github.io/2019/12/12/CPlusPlus%E4%B8%ADCout%E8%BE%93%E5%87%BA%E5%88%B0%E6%96%87%E4%BB%B6/
                         cout.rdbuf(hack_buf);
                         cout << setw(16) << setfill('0') << bitset<8>(symMap[m[1]]) << endl;
                         cout.rdbuf(origin);
                         cout << setw(16) << setfill('0') << bitset<8>(symMap[m[1]]);
                         cout << nouppercase << ' ' << setw(4) << hex << symMap[m[1]] << " ";
-                        cout.rdbuf(bin_buf); //
-                        cout << nouppercase << dec << symMap[m[1]] << endl;
-                        cout.rdbuf(origin);
+                        // cout.rdbuf(bin_buf); //
+                        bitset<16> set(symMap[m[1]]);  
+                        save2bin = set.to_ulong();
+                        to_bin.write((char *) &save2bin, sizeof(save2bin)/2);
                     }else{
                         cout.rdbuf(hack_buf);
                         cout << setw(16) << setfill('0') << bitset<8>(stoi(m[1])) << endl;
                         cout.rdbuf(origin);
                         cout << setw(16) << setfill('0') << bitset<8>(stoi(m[1]));
                         cout << nouppercase << ' ' << setw(4) << hex << stoi(m[1]) << " ";
-                        cout.rdbuf(bin_buf); //
-                        cout << nouppercase << m[1] << endl;
-                        cout.rdbuf(origin);
+                        // cout.rdbuf(bin_buf); //
+                        save2bin = stoi(m[1]);
+                        to_bin.write((char *) &save2bin, sizeof(save2bin)/2);
                     }
                 }
             }else{
                 // C cmd
                 string d, js, comp, dcode, ccode, jcode;
-
                 // string::size_type loc = line.find("=",0);
                 if (line[1] == '='){
                     string::size_type loc = line.find("=",0);
@@ -164,9 +156,9 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
 
                     cout << nouppercase << hex << " " << set.to_ulong() << " ";
 
-                    cout.rdbuf(bin_buf); //
-                    cout << nouppercase << dec << stoi(binary_str,0,2) << endl;
-                    cout.rdbuf(origin);
+                    // cout.rdbuf(bin_buf); //
+                    save2bin = stoi(binary_str,0,2);
+                    to_bin.write((char *) &save2bin, sizeof(save2bin)/2);
                 }else{
                     string::size_type loc = line.find(";",0);
                     
@@ -184,11 +176,9 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
                     string binary_str("111"+ccode+"000"+jcode);
                     bitset<16> set(binary_str);  
                     cout << nouppercase << hex << " " << set.to_ulong() << " ";
-                    cout.rdbuf(bin_buf); //
-                    // to_bin.write((char *) &buf, sizeof(buf));
-                    // to_bin.write(binary_str,binary_str.size())
-                    cout << ios::binary << nouppercase << dec << stoi(binary_str,0,2) << endl;
-                    cout.rdbuf(origin);
+                    // cout.rdbuf(bin_buf); //
+                    save2bin = stoi(binary_str,0,2);
+                    to_bin.write((char *) &save2bin, sizeof(save2bin)/2);
                 }
             }
             cout << endl;
@@ -196,7 +186,6 @@ void parse2(string line, string& save, int* counter, streambuf *hack_buf, stream
         }
     }
 }
-
 
 
 void pass1(string inFile, string line, string save, int* counter){
@@ -210,7 +199,6 @@ void pass1(string inFile, string line, string save, int* counter){
 }
 
 void pass2(string inFile, string line, string save, int* counter, streambuf *hack_buf, streambuf *bin_buf, streambuf *origin){
-// void pass2(string inFile, string line, string save, int* counter){
     cout << "============= PASS2 ================" << endl;
     ifstream in;
     in.open(inFile);
@@ -221,7 +209,6 @@ void pass2(string inFile, string line, string save, int* counter, streambuf *hac
     }
 }
 
-ofstream to_bin("sum.bin",std::ofstream::binary);
 
 void assemble(string file) {
     string line;
@@ -232,72 +219,31 @@ void assemble(string file) {
     string binFile(file+".bin");
     string a(file+".");
 
-    cout<< inFile << endl ;
-    cout << hackFile << endl ;
-    cout << binFile << endl;
-
     ifstream in;
     in.open(inFile);
 
     ofstream to_hack;
-    // ofstream to_bin;
+    // ofstream to_bin; // 請見line:12
     streambuf *hack_buf, *bin_buf, *origin;
     to_hack.open(hackFile, ios::out | ios::trunc); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
-    // to_bin.open(binFile, ios::out | ios::trunc | ios::binary); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
-    // to_bin.open(binFile, std::fstream::trunc|std::fstream::binary); //開啟檔案為輸出狀態，若檔案已存在則清除檔案內容重新寫入
+    to_bin.open(binFile,std::ofstream::binary);
     origin = cout.rdbuf();
     hack_buf = to_hack.rdbuf();
     bin_buf = to_bin.rdbuf();
-
-    to_bin.write("1234", strlen("1234"));
-    
- 
+        
     int counter = 0;
     pass1(inFile, line, save, &counter);
     counter = 0;
     pass2(inFile, line, save, &counter, hack_buf, bin_buf, origin);
-    // pass2(inFile, line, save, &counter);
 
     in.close();
     to_hack.close();
     to_bin.close();
-    
-
-    
-
-    // int abc = 3;
-    // cout << abc << endl;
-
-    // cout<< inFile << endl ;
-    // cout << hackFile << endl ;
-    // cout << binFile << endl;
-    // cout << a << endl;
-    // cout << binFile << endl;
-
-    // ofstream out_hack;
-    // out_hack.open(hackFile);
-    // if (out_hack.fail()) cout << "fail";
-    // else cout << "write hackFile ok"  << endl;
-    // out_hack << "12345678\n\n888";
-    // out_hack.close();
-
-    // ifstream inHack;
-    // inHack.open(hackFile);
-    // if (out_hack.fail()) cout << "fail";
-    // else cout << "read hackFile ok"  << endl;
-    // string aaaa;
-    // inHack >> aaaa;
-    // cout << "hackFile:" << aaaa;
-    // inHack.close();
-
-    // in.close();
-
-    // out_bin.close();
 }
 
-int main(void) {
+
+int main(int argc, char *argv[]) {
     string file("sum");
-    assemble(file);
+    assemble(argv[1]);
     return 0;
 }
-
