@@ -205,7 +205,6 @@ void pass2(string inFile, string line, string save, int* counter, streambuf *hac
     while (getline(in, line))
     {
         parse2(line, save, counter, hack_buf, bin_buf, origin);
-        // parse2(line, save, counter);
     }
 }
 
