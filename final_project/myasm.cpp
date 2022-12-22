@@ -242,7 +242,6 @@ void assemble(string file) {
 
 
 int main(int argc, char *argv[]) {
-    string file("sum");
     assemble(argv[1]);
     return 0;
 }
