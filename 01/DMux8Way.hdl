@@ -10,6 +10,7 @@
  *                            etc.
  *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
  */
+// 本程式是原創
 
 CHIP DMux8Way {
     IN in, sel[3];

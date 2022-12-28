@@ -25,6 +25,7 @@
 // if (no == 1) set out = !out   // bitwise not
 // if (out == 0) set zr = 1
 // if (out < 0) set ng = 1
+// 本程式是原創
 
 CHIP ALU-nostat {
     IN  

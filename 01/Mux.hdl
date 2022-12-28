@@ -8,6 +8,7 @@
  * out = a if sel == 0
  *       b otherwise
  */
+// 本程式是原創
 
 CHIP Mux {
     IN a, b, sel;

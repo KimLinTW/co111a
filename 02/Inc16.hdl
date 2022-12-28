@@ -7,6 +7,7 @@
  * 16-bit incrementer:
  * out = in + 1 (arithmetic addition)
  */
+// 本程式是原創
 
 CHIP Inc16 {
     IN in[16];

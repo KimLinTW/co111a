@@ -7,6 +7,8 @@
  * Exclusive-or gate:
  * out = not (a == b)
  */
+// 本程式是原創
+
 
 CHIP Xor {
     IN a, b;

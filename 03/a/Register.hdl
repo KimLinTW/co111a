@@ -8,6 +8,7 @@
  * If load[t] == 1 then out[t+1] = in[t]
  * else out does not change
  */
+// 本程式是原創
 
 CHIP Register {
     IN in[16], load;

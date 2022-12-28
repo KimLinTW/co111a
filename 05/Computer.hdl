@@ -17,7 +17,11 @@
 CHIP Computer {
 
     IN reset;
+    // 本程式是原創
 
     PARTS:
     // Put your code here:
+    ROM32K(address=pc, out=ins);
+    Memory(in=out, load=write_m, address=addr_m, out=memory_out);
+    CPU(inM=memory_out, instruction=ins, reset=reset, outM=out, writeM=write_m, addressM=addr_m, pc=pc);
 }

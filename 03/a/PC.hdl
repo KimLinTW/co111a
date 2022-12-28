@@ -10,6 +10,7 @@
  * else if (inc[t] == 1)   out[t+1] = out[t] + 1  (integer addition)
  * else                    out[t+1] = out[t]
  */
+// 本程式是原創
 
 CHIP PC {
     IN in[16],load,inc,reset;

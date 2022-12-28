@@ -10,6 +10,7 @@
  *                {0, 0, in, 0} if sel == 10
  *                {0, 0, 0, in} if sel == 11
  */
+// 本程式是原創
 
 CHIP DMux4Way {
     IN in, sel[2];

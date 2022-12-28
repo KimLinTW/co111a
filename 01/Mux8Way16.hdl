@@ -10,6 +10,7 @@
  *       etc.
  *       h if sel == 111
  */
+// 本程式是原創
 
 CHIP Mux8Way16 {
     IN a[16], b[16], c[16], d[16],

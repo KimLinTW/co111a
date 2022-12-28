@@ -7,6 +7,7 @@
 // (R0, R1, R2 refer to RAM[0], RAM[1], and RAM[2], respectively.)
 
 // Put your code here.
+// 本程式是原創
 
 // Set R2 to R0*R1
 

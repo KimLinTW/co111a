@@ -24,6 +24,7 @@
  * CPU jumps to address 0 (i.e. pc is set to 0 in next time step) rather 
  * than to the address resulting from executing the current instruction. 
  */
+// 基本上原創，但遇到真的想不出來時會參考 老師的程式 看懂後再寫
 
 CHIP CPU {
 

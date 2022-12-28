@@ -7,6 +7,7 @@
  * 16-bit bitwise Or:
  * for i = 0..15 out[i] = (a[i] or b[i])
  */
+// 本程式是原創
 
 CHIP Or16 {
     IN a[16], b[16];

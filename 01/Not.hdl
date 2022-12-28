@@ -7,6 +7,7 @@
  * Not gate:
  * out = not in
  */
+// 本程式是原創
 
 CHIP Not {
     IN in;

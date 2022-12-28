@@ -6,6 +6,7 @@
 /**
  * Computes the sum of three bits.
  */
+// 本程式是原創
 
 CHIP FullAdder {
     IN a, b, c;  // 1-bit inputs

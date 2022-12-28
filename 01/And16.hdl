@@ -7,6 +7,7 @@
  * 16-bit bitwise And:
  * for i = 0..15: out[i] = (a[i] and b[i])
  */
+// 本程式是原創
 
 CHIP And16 {
     IN a[16], b[16];

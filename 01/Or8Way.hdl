@@ -7,6 +7,7 @@
  * 8-way Or: 
  * out = (in[0] or in[1] or ... or in[7])
  */
+// 本程式是原創
 
 CHIP Or8Way {
     IN in[8];
